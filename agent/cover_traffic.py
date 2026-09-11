@@ -18,7 +18,7 @@ import random
 import subprocess
 import time
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Pre-generated traffic patterns — common sites a phone user would visit
 WEBSITES = [
@@ -217,7 +217,7 @@ def log_request(url, status, size):
     """Log cover traffic to separate file (not agent feed)."""
     global _stats
     entry = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z",
         "url": url[:120],
         "status": status,
         "bytes": size,
@@ -229,7 +229,7 @@ def log_request(url, status, size):
         pass
 
     # Update hourly stats
-    hour_key = datetime.utcnow().strftime("%Y-%m-%dT%H")
+    hour_key = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
     _stats["total"] += 1
     _stats["hourly"][hour_key] = _stats["hourly"].get(hour_key, 0) + 1
 
